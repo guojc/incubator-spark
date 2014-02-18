@@ -334,7 +334,13 @@ private[spark] class ExternalAppendOnlyMap[K, V, C](
 
       override def compareTo(other: StreamBuffer): Int = {
         // minus sign because mutable.PriorityQueue dequeues the max, not the min
-        -minKeyHash.compareTo(other.minKeyHash)
+        // non-empty buffer is greater than empty buffer accordingly
+        (pairs.length, other.pairs.length) match{
+          case (0,0) => 0
+          case (0,y:Int) if( y > 0 ) => -1
+          case (x:Int,0) if( x > 0 ) => 1
+          case (x:Int,y:Int) if ( x > 0 && y > 0) => -minKeyHash.compareTo(other.minKeyHash)
+        }
       }
     }
   }
