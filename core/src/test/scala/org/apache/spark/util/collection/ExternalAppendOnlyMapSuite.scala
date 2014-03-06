@@ -78,27 +78,6 @@ class ExternalAppendOnlyMapSuite extends FunSuite with LocalSparkContext {
       (3, Set[Int](30))))
   }
 
-  test("insert with collision on hashCode Int.MaxValue") {
-    val conf = new SparkConf(false)
-    sc = new SparkContext("local", "test", conf)
-
-    val map = new ExternalAppendOnlyMap[Int, Int, ArrayBuffer[Int]](createCombiner,
-      mergeValue, mergeCombiners)
-
-    map.insert(Int.MaxValue, 10)
-    map.insert(2, 20)
-    map.insert(3, 30)
-    map.insert(Int.MaxValue, 100)
-    map.insert(2, 200)
-    map.insert(Int.MaxValue, 1000)
-    val it = map.iterator
-    assert(it.hasNext)
-    val result = it.toSet[(Int, ArrayBuffer[Int])].map(kv => (kv._1, kv._2.toSet))
-    assert(result == Set[(Int, Set[Int])](
-      (Int.MaxValue, Set[Int](10, 100, 1000)),
-      (2, Set[Int](20, 200)),
-      (3, Set[Int](30))))
-  }
 
   test("ordering") {
     val conf = new SparkConf(false)
