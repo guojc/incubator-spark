@@ -249,11 +249,11 @@ private[spark] object Utils extends Logging {
     uri.getScheme match {
       case "http" | "https" | "ftp" =>
         logInfo("Fetching " + url + " to " + tempFile)
-        val timeOut = System.getProperty("spark.worker.timeout","60").toInt*1000
+        val timeout = conf.getInt("spark.files.fetchTimeout",60).toInt * 1000
         val urlObject= new URL(url)
-        val urlConn=urlObject.openConnection()
-        urlConn.setConnectTimeout(timeOut)
-        urlConn.setReadTimeout(timeOut)
+        val urlConn = urlObject.openConnection()
+        urlConn.setConnectTimeout(timeout)
+        urlConn.setReadTimeout(timeout)
         urlConn.connect()
         val in =urlConn.getInputStream()
         val out = new FileOutputStream(tempFile)
