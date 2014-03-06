@@ -78,7 +78,6 @@ class ExternalAppendOnlyMapSuite extends FunSuite with LocalSparkContext {
       (3, Set[Int](30))))
   }
 
-
   test("ordering") {
     val conf = new SparkConf(false)
     sc = new SparkContext("local", "test", conf)
